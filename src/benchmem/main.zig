@@ -1,14 +1,14 @@
 const std = @import("std");
 
 extern fn c_benchRead1Bx1(mem_block: [*]u8, mem_block_size: usize) void;
-extern fn c_benchRead64Bx1(mem_block: [*]u8, mem_block_size: usize) void;
-extern fn c_benchRead64Bx1NT(mem_block: [*]u8, mem_block_size: usize) void;
+extern fn c_benchRead32Bx4(mem_block: [*]u8, mem_block_size: usize) void;
+extern fn c_benchRead32Bx4NT(mem_block: [*]u8, mem_block_size: usize) void;
 extern fn c_benchWrite1Bx1(mem_block: [*]u8, mem_block_size: usize) void;
-extern fn c_benchWrite64Bx1(mem_block: [*]u8, mem_block_size: usize) void;
-extern fn c_benchWrite64Bx1NT(mem_block: [*]u8, mem_block_size: usize) void;
+extern fn c_benchWrite32Bx4(mem_block: [*]u8, mem_block_size: usize) void;
+extern fn c_benchWrite32Bx4NT(mem_block: [*]u8, mem_block_size: usize) void;
 extern fn c_benchCopy1Bx1(mem_block: [*]u8, mem_block_size: usize) void;
-extern fn c_benchCopy64Bx1(mem_block: [*]u8, mem_block_size: usize) void;
-extern fn c_benchCopy64Bx1NT(mem_block: [*]u8, mem_block_size: usize) void;
+extern fn c_benchCopy32Bx4(mem_block: [*]u8, mem_block_size: usize) void;
+extern fn c_benchCopy32Bx4NT(mem_block: [*]u8, mem_block_size: usize) void;
 extern fn c_benchLatencyRAR(mem_block: [*]u8, mem_block_size: usize) usize;
 extern fn c_benchLatencyWAR(mem_block: [*]u8, mem_block_size: usize) usize;
 
@@ -66,17 +66,17 @@ fn warpedBenchLatency(f_name: []const u8, score_unit: []const u8, comptime f: an
 
 pub fn main() !void {
     try warpedBench("Read  1Bx1    ", "GB/s", c_benchRead1Bx1);
-    try warpedBench("Read  64Bx1   ", "GB/s", c_benchRead64Bx1);
-    try warpedBench("Read  64Bx1 NT", "GB/s", c_benchRead64Bx1NT);
+    try warpedBench("Read  32Bx4   ", "GB/s", c_benchRead32Bx4);
+    try warpedBench("Read  32Bx4 NT", "GB/s", c_benchRead32Bx4NT);
     try warpedBench("Write 1Bx1    ", "GB/s", c_benchWrite1Bx1);
-    try warpedBench("Write 64Bx1   ", "GB/s", c_benchWrite64Bx1);
-    try warpedBench("Write 64Bx1 NT", "GB/s", c_benchWrite64Bx1NT);
+    try warpedBench("Write 32Bx4   ", "GB/s", c_benchWrite32Bx4);
+    try warpedBench("Write 32Bx4 NT", "GB/s", c_benchWrite32Bx4NT);
     try warpedBench("Copy  1Bx1    ", "GB/s", c_benchCopy1Bx1);
-    try warpedBench("Copy  64Bx1   ", "GB/s", c_benchCopy64Bx1);
-    try warpedBench("Copy  64Bx1 NT", "GB/s", c_benchCopy64Bx1NT);
+    try warpedBench("Copy  32Bx4   ", "GB/s", c_benchCopy32Bx4);
+    try warpedBench("Copy  32Bx4 NT", "GB/s", c_benchCopy32Bx4NT);
     try warpedBenchAlloc("Alloc 1Bx1    ", "GB/s", c_benchWrite1Bx1);
-    try warpedBenchAlloc("Alloc 64Bx1   ", "GB/s", c_benchWrite64Bx1);
-    try warpedBenchAlloc("Alloc 64Bx1 NT", "GB/s", c_benchWrite64Bx1NT);
+    try warpedBenchAlloc("Alloc 32Bx4   ", "GB/s", c_benchWrite32Bx4);
+    try warpedBenchAlloc("Alloc 32Bx4 NT", "GB/s", c_benchWrite32Bx4NT);
     try warpedBenchLatency("Latency RAR", "ns", c_benchLatencyRAR);
     try warpedBenchLatency("Latency WAR", "ns", c_benchLatencyWAR);
 

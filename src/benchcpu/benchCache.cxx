@@ -10,10 +10,10 @@ constexpr auto LOAD_FRACTION = 2;
 
 __attribute__((no_builtin)) auto benchCache(u8* buf, usize buf_size) -> f64
 {
-#pragma nounroll
     for (i32 load = 0; load < (i32)(LOAD_FRACTION * 1e+3); load++)
-#pragma vectorize_width(32)
-#pragma interleave_count(2)
+#pragma clang loop vectorize_width(64)
+#pragma clang loop interleave_count(1)
+#pragma clang loop unroll(disable)
         for (i32 i = 0; i < buf_size; i++)
             buf[i] = (u8)load;
 

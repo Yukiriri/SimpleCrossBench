@@ -1,0 +1,65 @@
+name: Release Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Generate Version & Notes
+        id: generate
+        shell: pwsh
+        run: |
+          $date = Get-Date -Format 'yyyy.MM.dd'
+          $build_num = $env:GITHUB_RUN_NUMBER -as [int]
+          $build_num = $build_num % 100
+          $build_ver = "$date.$build_num"
+          Write-Output build_ver=$build_ver
+          echo "release_ver=$build_ver" >> $env:GITHUB_OUTPUT
+
+          [Console]::InputEncoding = [System.Text.Encoding]::UTF8
+          [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+          $previous_tag = $(git describe --tags --abbrev=0 HEAD^ 2>$null)
+          if ($previous_tag -eq '') {
+            $release_body = $(git log --pretty=format:"- %s" --reverse)
+          } else {
+            $release_body = $(git log "$previous_tag..HEAD" --pretty=format:'- %s' --reverse)
+          }
+          Write-Output previous_tag=$previous_tag
+          Write-Output release_body=$release_body
+          echo $release_body > CHANGELOG.txt
+
+      - name: Setup Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.2
+
+      - name: Zig Build
+        run: zig build
+
+      - name: Zip Bin
+        run: 7z a bin.zip -r ./bin/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ steps.generate.outputs.release_ver }}
+          tag_name: ${{ steps.generate.outputs.release_ver }}
+          body_path: CHANGELOG.txt
+          files: |
+            ./bin.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          

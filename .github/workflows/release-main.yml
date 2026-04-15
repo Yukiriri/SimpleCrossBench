@@ -59,7 +59,7 @@ jobs:
           name: ${{ steps.generate.outputs.release_ver }}
           body_path: CHANGELOG.txt
           files: |
-            /bin.zip
+            ./bin.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           

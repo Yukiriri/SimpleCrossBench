@@ -6,8 +6,8 @@ using u8    = unsigned char;
 using u64   = unsigned long long;
 using usize = u64;
 
-constexpr auto LOAD_FRACTION     = 2;
-constexpr auto SUPERSCALAR_COUNT = 16;
+constexpr auto LOAD_FRACTION     = 1;
+constexpr auto SUPERSCALAR_COUNT = 32;
 
 auto benchALU_idiv(i32& a, i32& b) -> void
 {

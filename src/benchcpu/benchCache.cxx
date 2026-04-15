@@ -6,7 +6,7 @@ using u8    = unsigned char;
 using u64   = unsigned long long;
 using usize = u64;
 
-constexpr auto LOAD_FRACTION = 2;
+constexpr auto LOAD_FRACTION = 1;
 
 __attribute__((no_builtin)) auto benchCache(u8* buf, usize buf_size) -> f64
 {

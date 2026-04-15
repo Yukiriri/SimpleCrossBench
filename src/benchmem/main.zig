@@ -30,7 +30,7 @@ const BENCH_TIME_MS = 3000;
 const allocator = std.heap.page_allocator;
 const MEM_BLOCK_SIZE = 512 << 20;
 
-fn warpedBench(f_name: []const u8, score_unit: []const u8, comptime f: anytype) !void {
+fn warpedBench1(f_name: []const u8, score_unit: []const u8, comptime f: anytype) !void {
     const mem_block = try allocator.alloc(u8, MEM_BLOCK_SIZE);
     defer allocator.free(mem_block);
     @memset(mem_block, 0);
@@ -40,7 +40,7 @@ fn warpedBench(f_name: []const u8, score_unit: []const u8, comptime f: anytype) 
         std.debug.print("{s:<15}|{:<5.1}{s:>5}\r", .{ f_name, warpedScore(f, mem_block.ptr, mem_block.len), score_unit });
 }
 
-fn warpedBenchAlloc(f_name: []const u8, score_unit: []const u8, comptime f: anytype) !void {
+fn warpedBench2(f_name: []const u8, score_unit: []const u8, comptime f: anytype) !void {
     std.debug.print("\n", .{});
     const ms = std.time.milliTimestamp();
     while (std.time.milliTimestamp() - ms < BENCH_TIME_MS) {
@@ -50,7 +50,7 @@ fn warpedBenchAlloc(f_name: []const u8, score_unit: []const u8, comptime f: anyt
     }
 }
 
-fn warpedBenchLatency(f_name: []const u8, score_unit: []const u8, comptime f: anytype) !void {
+fn warpedBench3(f_name: []const u8, score_unit: []const u8, comptime f: anytype) !void {
     const mem_block = try allocator.alloc(u8, MEM_BLOCK_SIZE);
     defer allocator.free(mem_block);
     @memset(mem_block, 0);
@@ -65,20 +65,20 @@ fn warpedBenchLatency(f_name: []const u8, score_unit: []const u8, comptime f: an
 }
 
 pub fn main() !void {
-    try warpedBench("Read  1Bx1    ", "GB/s", c_benchRead1Bx1);
-    try warpedBench("Read  32Bx4   ", "GB/s", c_benchRead32Bx4);
-    try warpedBench("Read  32Bx4 NT", "GB/s", c_benchRead32Bx4NT);
-    try warpedBench("Write 1Bx1    ", "GB/s", c_benchWrite1Bx1);
-    try warpedBench("Write 32Bx4   ", "GB/s", c_benchWrite32Bx4);
-    try warpedBench("Write 32Bx4 NT", "GB/s", c_benchWrite32Bx4NT);
-    try warpedBench("Copy  1Bx1    ", "GB/s", c_benchCopy1Bx1);
-    try warpedBench("Copy  32Bx4   ", "GB/s", c_benchCopy32Bx4);
-    try warpedBench("Copy  32Bx4 NT", "GB/s", c_benchCopy32Bx4NT);
-    try warpedBenchAlloc("Alloc 1Bx1    ", "GB/s", c_benchWrite1Bx1);
-    try warpedBenchAlloc("Alloc 32Bx4   ", "GB/s", c_benchWrite32Bx4);
-    try warpedBenchAlloc("Alloc 32Bx4 NT", "GB/s", c_benchWrite32Bx4NT);
-    try warpedBenchLatency("Latency RAR", "ns", c_benchLatencyRAR);
-    try warpedBenchLatency("Latency WAR", "ns", c_benchLatencyWAR);
+    try warpedBench1("Read  1Bx1    ", "GB/s", c_benchRead1Bx1);
+    try warpedBench1("Read  32Bx4   ", "GB/s", c_benchRead32Bx4);
+    try warpedBench1("Read  32Bx4 NT", "GB/s", c_benchRead32Bx4NT);
+    try warpedBench1("Write 1Bx1    ", "GB/s", c_benchWrite1Bx1);
+    try warpedBench1("Write 32Bx4   ", "GB/s", c_benchWrite32Bx4);
+    try warpedBench1("Write 32Bx4 NT", "GB/s", c_benchWrite32Bx4NT);
+    try warpedBench1("Copy  1Bx1    ", "GB/s", c_benchCopy1Bx1);
+    try warpedBench1("Copy  32Bx4   ", "GB/s", c_benchCopy32Bx4);
+    try warpedBench1("Copy  32Bx4 NT", "GB/s", c_benchCopy32Bx4NT);
+    try warpedBench2("Alloc 1Bx1    ", "GB/s", c_benchWrite1Bx1);
+    try warpedBench2("Alloc 32Bx4   ", "GB/s", c_benchWrite32Bx4);
+    try warpedBench2("Alloc 32Bx4 NT", "GB/s", c_benchWrite32Bx4NT);
+    try warpedBench3("Latency RAR   ", "ns", c_benchLatencyRAR);
+    try warpedBench3("Latency WAR   ", "ns", c_benchLatencyWAR);
 
     std.debug.print("\n", .{});
 }

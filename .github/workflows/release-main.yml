@@ -33,9 +33,9 @@ jobs:
           [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
           $previous_tag = $(git describe --tags --abbrev=0 HEAD^ 2>$null)
           if ($previous_tag -eq '') {
-            $release_body = $(git log --pretty=format:"- %s" --reverse)
+            $release_body = $(git log --pretty=format:"- `%h`: %s")
           } else {
-            $release_body = $(git log "$previous_tag..HEAD" --pretty=format:'- %s' --reverse)
+            $release_body = $(git log "$previous_tag..HEAD" --pretty=format:'- `%h`: %s')
           }
           Write-Output previous_tag=$previous_tag
           Write-Output release_body=$release_body
@@ -55,11 +55,11 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
-          name: ${{ steps.generate.outputs.release_ver }}
           tag_name: ${{ steps.generate.outputs.release_ver }}
+          name: ${{ steps.generate.outputs.release_ver }}
           body_path: CHANGELOG.txt
           files: |
-            ./bin.zip
+            /bin.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
